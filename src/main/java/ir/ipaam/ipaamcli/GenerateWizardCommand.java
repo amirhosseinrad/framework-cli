@@ -101,11 +101,17 @@ public class GenerateWizardCommand implements Callable<Integer> {
                             baseDir + "/src/main/java/" + basePackage + "/domain/model/valueobject/" + "package-info.java");
 
                     // === Application Layer ===
-                    generator.generate("service/Service.java.ftl", model,
-                            baseDir + "/src/main/java/" + basePackage + "/application/service/" + entityName + "Service.java");
+                    generator.generate("service/CommandService.java.ftl", model,
+                            baseDir + "/src/main/java/" + basePackage + "/application/service/command/" + entityName + "CommandService.java");
 
-                    generator.generate("service/ServiceImpl.java.ftl", model,
-                            baseDir + "/src/main/java/" + basePackage + "/application/service/" + entityName + "ServiceImpl.java");
+                    generator.generate("service/CommandServiceImpl.java.ftl", model,
+                            baseDir + "/src/main/java/" + basePackage + "/application/service/command/" + entityName + "CommandServiceImpl.java");
+
+                    generator.generate("service/QueryService.java.ftl", model,
+                            baseDir + "/src/main/java/" + basePackage + "/application/service/query/" + entityName + "QueryService.java");
+
+                    generator.generate("service/QueryServiceImpl.java.ftl", model,
+                            baseDir + "/src/main/java/" + basePackage + "/application/service/query/" + entityName + "QueryServiceImpl.java");
 
                     generator.generate("query/QueryHandler.java.ftl", model,
                             baseDir + "/src/main/java/" + basePackage + "/application/service/" + entityName + "QueryHandler.java");
