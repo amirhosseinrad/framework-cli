@@ -86,7 +86,7 @@ public class GenerateWizardCommand implements Callable<Integer> {
                 if (cqrs) {
                     // === Domain Layer (pure Axon artifacts) ===
                     generator.generate("info/package-info.java.ftl", model,
-                            baseDir + "/src/main/java/" + basePackage + "/domain/command/" + entityName + "package-info.java");
+                            baseDir + "/src/main/java/" + basePackage + "/domain/command/" + entityName + "/package-info.java");
 
                     generator.generate("info/package-info.java.ftl", model,
                             baseDir + "/src/main/java/" + basePackage + "/domain/event/" + "package-info.java");
@@ -117,7 +117,7 @@ public class GenerateWizardCommand implements Callable<Integer> {
                             baseDir + "/src/main/java/" + basePackage + "/application/service/" + entityName + "QueryHandler.java");
 
                     generator.generate("info/package-info.java.ftl", model,
-                            baseDir + "/src/main/java/" + basePackage + "/application/workflow/" + entityName + "package-info.java");
+                            baseDir + "/src/main/java/" + basePackage + "/application/workflow/" + entityName + "/package-info.java");
 
                     // === API Layer ===
                     generator.generate("commands/CommandController.java.ftl", model,
