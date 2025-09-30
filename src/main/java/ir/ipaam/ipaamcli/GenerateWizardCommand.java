@@ -29,7 +29,7 @@ public class GenerateWizardCommand implements Callable<Integer> {
 
         String defaultBasePackage = "ir.ipaam." + serviceName.toLowerCase();
         basePackage = basePackage.isEmpty() ? defaultBasePackage : basePackage;
-        String baseDir = "./generated/" + serviceName + "-service";
+        String baseDir = "./generated/" + serviceName;
         System.out.print("👉 Enable CQRS/ES with Axon? (y/n): ");
         boolean cqrs = scanner.nextLine().trim().equalsIgnoreCase("y");
 
@@ -228,12 +228,12 @@ public class GenerateWizardCommand implements Callable<Integer> {
 
 
 
-        System.out.println("\n🎉 Project scaffold generated in ./generated/" + serviceName + "-service");
+        System.out.println("\n🎉 Project scaffold generated in ./generated/" + serviceName);
 
         if (cqrs && !camunda && !entitiesGenerated) {
             try {
                 String packagePath = basePackage.replace('.', '/');
-                Path projectBase = Paths.get(baseDir, "src/main/java", packagePath, "project");
+                Path projectBase = Paths.get(baseDir, "src/main/java", packagePath);
                 Files.createDirectories(projectBase);
                 String[] packages = {
                         "api",
