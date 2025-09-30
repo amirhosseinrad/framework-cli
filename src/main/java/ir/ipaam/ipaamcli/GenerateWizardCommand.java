@@ -2,6 +2,9 @@ package ir.ipaam.ipaamcli;
 
 import picocli.CommandLine.Command;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,7 @@ public class GenerateWizardCommand implements Callable<Integer> {
 
         String defaultBasePackage = "ir.ipaam." + serviceName.toLowerCase();
         basePackage = basePackage.isEmpty() ? defaultBasePackage : basePackage;
+        String baseDir = "./generated/" + serviceName + "-service";
         System.out.print("👉 Enable CQRS/ES with Axon? (y/n): ");
         boolean cqrs = scanner.nextLine().trim().equalsIgnoreCase("y");
 
@@ -40,6 +44,7 @@ public class GenerateWizardCommand implements Callable<Integer> {
 
         System.out.print("📦 Do you want to create entities now? (y/n): ");
         boolean createEntities = scanner.nextLine().trim().equalsIgnoreCase("y");
+        boolean entitiesGenerated = false;
 
         while (createEntities) {
             System.out.print("📦 Entity name: ");
@@ -81,8 +86,6 @@ public class GenerateWizardCommand implements Callable<Integer> {
 
             try {
                 TemplateGenerator generator = new TemplateGenerator();
-                String baseDir = "./generated/" + serviceName + "-service";
-
                 if (cqrs) {
                     // === Domain Layer (pure Axon artifacts) ===
                     generator.generate("info/package-info.java.ftl", model,
@@ -170,6 +173,8 @@ public class GenerateWizardCommand implements Callable<Integer> {
                 e.printStackTrace();
             }
 
+            entitiesGenerated = true;
+
             System.out.print("📦 Add another entity? (y/n): ");
             createEntities = scanner.nextLine().trim().equalsIgnoreCase("y");
         }
@@ -186,8 +191,6 @@ public class GenerateWizardCommand implements Callable<Integer> {
 
         try {
             TemplateGenerator generator = new TemplateGenerator();
-            String baseDir = "./generated/" + serviceName + "-service";
-
             // pom.xml
             generator.generate("application/pom.xml.ftl", model,
                     baseDir + "/pom.xml");
@@ -226,6 +229,41 @@ public class GenerateWizardCommand implements Callable<Integer> {
 
 
         System.out.println("\n🎉 Project scaffold generated in ./generated/" + serviceName + "-service");
+
+        if (cqrs && !camunda && !entitiesGenerated) {
+            try {
+                String packagePath = basePackage.replace('.', '/');
+                Path projectBase = Paths.get(baseDir, "src/main/java", packagePath, "project");
+                Files.createDirectories(projectBase);
+                String[] packages = {
+                        "api",
+                        "api/controller",
+                        "api/dto",
+                        "application",
+                        "application/service",
+                        "application/service/command",
+                        "application/service/query",
+                        "application/workflow",
+                        "domain",
+                        "domain/command",
+                        "domain/event",
+                        "domain/model",
+                        "domain/model/aggregate",
+                        "domain/model/entity",
+                        "domain/model/valueobject",
+                        "infrastructure",
+                        "infrastructure/repository",
+                        "bootstrap",
+                        "bootstrap/config"
+                };
+                for (String pkg : packages) {
+                    Files.createDirectories(projectBase.resolve(pkg));
+                }
+                System.out.println("📁 Created base CQRS package structure (no entities).");
+            } catch (Exception e) {
+                System.err.println("⚠️  Failed to create base CQRS package structure: " + e.getMessage());
+            }
+        }
         return 0;
     }
 
